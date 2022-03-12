@@ -13,17 +13,20 @@ import org.litote.kmongo.coroutine.*
 import org.litote.kmongo.reactivestreams.KMongo
 import com.mongodb.ConnectionString
 
-val shoppingList = mutableListOf(
+val connectionString: ConnectionString? = System.getenv("MONGODB_URI")?.let {
 
-    ShoppingListItem("Cucumbers 🥒", 1),
-    ShoppingListItem("Tomatoes 🍅", 2),
-    ShoppingListItem("Orange Juice 🍊", 3)
+    ConnectionString("$it?retryWrites=false")
 
-)
+}
+
+val client = if (connectionString != null) KMongo.createClient(connectionString).coroutine else KMongo.createClient().coroutine
+val database = client.getDatabase(connectionString?.database ?: "shoppingList")
+val collection = database.getCollection<ShoppingListItem>()
 
 fun main() {
 
-    embeddedServer(Netty, 9090) {
+    val port = System.getenv("PORT")?.toInt() ?: 9090
+    embeddedServer(Netty, port) {
 
         install(ContentNegotiation) {
 
@@ -64,19 +67,19 @@ fun main() {
 
                 get {
 
-                    call.respond(shoppingList)
+                    call.respond(collection.find().toList())
 
                 }
                 post {
 
-                    shoppingList += call.receive<ShoppingListItem>()
+                    collection.insertOne(call.receive<ShoppingListItem>())
                     call.respond(HttpStatusCode.OK)
 
                 }
                 delete("/{id}") {
 
                     val id = call.parameters["id"]?.toInt() ?: error("Invalid delete request")
-                    shoppingList.removeIf { it.id == id }
+                    collection.deleteOne(ShoppingListItem::id eq id)
                     call.respond(HttpStatusCode.OK)
 
                 }
