@@ -26,6 +26,7 @@ val collection = database.getCollection<ShoppingListItem>()
 fun main() {
 
     val port = System.getenv("PORT")?.toInt() ?: 9090
+    println("Connection String: $connectionString")
     embeddedServer(Netty, port) {
 
         install(ContentNegotiation) {
