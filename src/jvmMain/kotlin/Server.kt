@@ -39,6 +39,7 @@ fun main() {
             method(HttpMethod.Get)
             method(HttpMethod.Post)
             method(HttpMethod.Delete)
+            header(HttpHeaders.ContentType)
             anyHost()
 
         }
