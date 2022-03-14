@@ -1,10 +1,10 @@
-POST http://localhost:9090/shoppingList
+POST https://stormy-scrubland-72901.herokuapp.com/shoppingList
 Content-Type: application/json
 
 {
 
-  "desc": "Peppers 🌶",
-  "priority": 5
+  "desc": "Peppers2 🌶",
+  "priority": 6
 
 }
 
