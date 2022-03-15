@@ -21,7 +21,7 @@ val App = FC<Props> {
 
     h1 {
 
-        +"Full-Stack Shopping List"
+        +"The HOLY Full-Stack Shopping List"
 
     }
     ul {
